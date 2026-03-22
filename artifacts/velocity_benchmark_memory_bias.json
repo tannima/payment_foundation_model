@@ -1,0 +1,51 @@
+{
+  "checkpoint": "artifacts/synthetic_model_velocity_memory_bias.pt",
+  "config": {
+    "use_entity_memory": true,
+    "use_relation_bias": true,
+    "hard_synth": true,
+    "test_size": 1600
+  },
+  "targets": {
+    "tx_count_1d": {
+      "mse_log": 0.014365741983056068,
+      "mae_log": 0.10609796643257141,
+      "pearson": 0.9504224061965942,
+      "spearman": 0.8816626071929932,
+      "pairwise_ranking_acc": 0.9978066682815552,
+      "bucket_accuracy": 0.940625011920929,
+      "exact_match_accuracy": 0.940625011920929,
+      "off_by_one_accuracy": 1.0
+    },
+    "distinct_card_count_7d": {
+      "mse_log": 0.015934672206640244,
+      "mae_log": 0.07946978509426117,
+      "pearson": 0.9036129713058472,
+      "spearman": 0.5674608945846558,
+      "pairwise_ranking_acc": 0.9765392541885376,
+      "bucket_accuracy": 0.8849999904632568,
+      "exact_match_accuracy": 0.8849999904632568,
+      "off_by_one_accuracy": 1.0
+    },
+    "same_device_distinct_card_7d": {
+      "mse_log": 0.05722815543413162,
+      "mae_log": 0.18180744349956512,
+      "pearson": 0.8667606711387634,
+      "spearman": 0.7248579859733582,
+      "pairwise_ranking_acc": 0.9366773962974548,
+      "bucket_accuracy": 0.6825000047683716,
+      "exact_match_accuracy": 0.6825000047683716,
+      "off_by_one_accuracy": 0.9962499737739563
+    },
+    "amount_sum_7d": {
+      "mse_log": 0.42974990606307983,
+      "mae_log": 0.4986145794391632,
+      "pearson": 0.8010742664337158,
+      "spearman": 0.9200726747512817,
+      "pairwise_ranking_acc": 0.8966465592384338,
+      "bucket_accuracy": 0.5993750095367432,
+      "within_10pct_accuracy": 0.16062499582767487,
+      "within_20pct_accuracy": 0.32374998927116394
+    }
+  }
+}

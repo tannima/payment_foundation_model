@@ -1,0 +1,11 @@
+.DS_Store
+__pycache__/
+*.pyc
+
+# Large local training artifacts
+artifacts/**/*.pt
+artifacts/**/*.jsonl
+
+# Python virtual environments
+.venv/
+venv/

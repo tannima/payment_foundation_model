@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560">
+<rect width="100%" height="100%" fill="white"/>
+<text x="480.0" y="32.0" font-size="22" text-anchor="middle" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="bold">Sample Scaling on Velocity Benchmark</text>
+<line x1="90.0" y1="60.0" x2="90.0" y2="480.0" stroke="#333" stroke-width="2"/>
+<line x1="90.0" y1="480.0" x2="920.0" y2="480.0" stroke="#333" stroke-width="2"/>
+<line x1="85.0" y1="480.0" x2="920.0" y2="480.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="78.0" y="485.0" font-size="12" text-anchor="end" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">0.0</text>
+<line x1="85.0" y1="396.0" x2="920.0" y2="396.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="78.0" y="401.0" font-size="12" text-anchor="end" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">0.2</text>
+<line x1="85.0" y1="312.0" x2="920.0" y2="312.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="78.0" y="317.0" font-size="12" text-anchor="end" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">0.4</text>
+<line x1="85.0" y1="228.0" x2="920.0" y2="228.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="78.0" y="233.0" font-size="12" text-anchor="end" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">0.6</text>
+<line x1="85.0" y1="144.0" x2="920.0" y2="144.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="78.0" y="149.0" font-size="12" text-anchor="end" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">0.8</text>
+<line x1="85.0" y1="60.0" x2="920.0" y2="60.0" stroke="#e0e0e0" stroke-width="1"/>
+<text x="78.0" y="65.0" font-size="12" text-anchor="end" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">1.0</text>
+<line x1="90.0" y1="480.0" x2="90.0" y2="485.0" stroke="#333" stroke-width="1"/>
+<text x="90.0" y="504.0" font-size="12" text-anchor="middle" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">1000</text>
+<line x1="165.5" y1="480.0" x2="165.5" y2="485.0" stroke="#333" stroke-width="1"/>
+<text x="165.5" y="504.0" font-size="12" text-anchor="middle" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">2000</text>
+<line x1="316.4" y1="480.0" x2="316.4" y2="485.0" stroke="#333" stroke-width="1"/>
+<text x="316.4" y="504.0" font-size="12" text-anchor="middle" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">4000</text>
+<line x1="618.2" y1="480.0" x2="618.2" y2="485.0" stroke="#333" stroke-width="1"/>
+<text x="618.2" y="504.0" font-size="12" text-anchor="middle" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">8000</text>
+<line x1="920.0" y1="480.0" x2="920.0" y2="485.0" stroke="#333" stroke-width="1"/>
+<text x="920.0" y="504.0" font-size="12" text-anchor="middle" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">12000</text>
+<line x1="110.0" y1="42.0" x2="130.0" y2="42.0" stroke="#4e79a7" stroke-width="3"/>
+<text x="138.0" y="46.0" font-size="12" text-anchor="start" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">xs</text>
+<polyline fill="none" stroke="#4e79a7" stroke-width="3" points="90.0,350.9 165.5,331.2 316.4,325.6 618.2,289.8 920.0,265.3"/>
+<circle cx="90.0" cy="350.9" r="4" fill="#4e79a7" />
+<circle cx="165.5" cy="331.2" r="4" fill="#4e79a7" />
+<circle cx="316.4" cy="325.6" r="4" fill="#4e79a7" />
+<circle cx="618.2" cy="289.8" r="4" fill="#4e79a7" />
+<circle cx="920.0" cy="265.3" r="4" fill="#4e79a7" />
+<line x1="110.0" y1="62.0" x2="130.0" y2="62.0" stroke="#f28e2b" stroke-width="3"/>
+<text x="138.0" y="66.0" font-size="12" text-anchor="start" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">s</text>
+<polyline fill="none" stroke="#f28e2b" stroke-width="3" points="90.0,379.5 165.5,347.4 316.4,323.5 618.2,322.1 920.0,199.1"/>
+<circle cx="90.0" cy="379.5" r="4" fill="#f28e2b" />
+<circle cx="165.5" cy="347.4" r="4" fill="#f28e2b" />
+<circle cx="316.4" cy="323.5" r="4" fill="#f28e2b" />
+<circle cx="618.2" cy="322.1" r="4" fill="#f28e2b" />
+<circle cx="920.0" cy="199.1" r="4" fill="#f28e2b" />
+<line x1="110.0" y1="82.0" x2="130.0" y2="82.0" stroke="#e15759" stroke-width="3"/>
+<text x="138.0" y="86.0" font-size="12" text-anchor="start" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">m</text>
+<polyline fill="none" stroke="#e15759" stroke-width="3" points="90.0,323.8 165.5,298.2 316.4,261.3 618.2,208.1 920.0,123.7"/>
+<circle cx="90.0" cy="323.8" r="4" fill="#e15759" />
+<circle cx="165.5" cy="298.2" r="4" fill="#e15759" />
+<circle cx="316.4" cy="261.3" r="4" fill="#e15759" />
+<circle cx="618.2" cy="208.1" r="4" fill="#e15759" />
+<circle cx="920.0" cy="123.7" r="4" fill="#e15759" />
+<line x1="110.0" y1="102.0" x2="130.0" y2="102.0" stroke="#76b7b2" stroke-width="3"/>
+<text x="138.0" y="106.0" font-size="12" text-anchor="start" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">l</text>
+<polyline fill="none" stroke="#76b7b2" stroke-width="3" points="90.0,299.6 165.5,294.1 316.4,210.9 618.2,121.2 920.0,123.5"/>
+<circle cx="90.0" cy="299.6" r="4" fill="#76b7b2" />
+<circle cx="165.5" cy="294.1" r="4" fill="#76b7b2" />
+<circle cx="316.4" cy="210.9" r="4" fill="#76b7b2" />
+<circle cx="618.2" cy="121.2" r="4" fill="#76b7b2" />
+<circle cx="920.0" cy="123.5" r="4" fill="#76b7b2" />
+<line x1="110.0" y1="122.0" x2="130.0" y2="122.0" stroke="#59a14f" stroke-width="3"/>
+<text x="138.0" y="126.0" font-size="12" text-anchor="start" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">xl</text>
+<polyline fill="none" stroke="#59a14f" stroke-width="3" points="90.0,287.0 165.5,281.0 316.4,190.1 618.2,105.3 920.0,118.8"/>
+<circle cx="90.0" cy="287.0" r="4" fill="#59a14f" />
+<circle cx="165.5" cy="281.0" r="4" fill="#59a14f" />
+<circle cx="316.4" cy="190.1" r="4" fill="#59a14f" />
+<circle cx="618.2" cy="105.3" r="4" fill="#59a14f" />
+<circle cx="920.0" cy="118.8" r="4" fill="#59a14f" />
+<text x="480.0" y="542.0" font-size="14" text-anchor="middle" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">Train Sample Size</text>
+<text x="18.0" y="270.0" font-size="14" text-anchor="middle" fill="#222" font-family="Arial, Helvetica, sans-serif" font-weight="normal">Overall Velocity Score</text>
+</svg>

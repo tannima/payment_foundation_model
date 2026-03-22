@@ -1,0 +1,29 @@
+{
+  "run_name": "smoke_hard",
+  "use_entity_memory": true,
+  "use_relation_bias": true,
+  "hard_synth": true,
+  "best_selection_score": -0.34789101805603295,
+  "best_metrics": {
+    "epoch": 1,
+    "fraud_accuracy": 0.5,
+    "fraud_precision_at_top10pct": 0.1666666716337204,
+    "fraud_recall_at_top10pct": 0.03508771929824561,
+    "hard_negative_fp_rate": 0.38297873735427856,
+    "hard_negative_mean_score": 0.49864712357521057,
+    "switch_attack_mean_score": 0.49546894431114197,
+    "switch_attack_recall_at_0.5": 0.4000000059604645,
+    "shared_device_benign_fp_rate": 0.31578946113586426,
+    "shared_device_benign_mean_score": 0.49578967690467834,
+    "travel_burst_benign_fp_rate": 0.4000000059604645,
+    "travel_burst_benign_mean_score": 0.49978816509246826,
+    "result_token_accuracy": 0.284472049689441,
+    "result_sequence_accuracy": 0.0,
+    "loss": 7.542279958724976,
+    "mse_tx_count": 0.6984105706214905,
+    "mse_distinct_card": 0.24629662930965424,
+    "mse_amount_sum": 22.912715911865234,
+    "mse_same_device_distinct_card": 0.9615381062030792,
+    "result_ce_loss": 2.3694515228271484
+  }
+}

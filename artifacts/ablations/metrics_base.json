@@ -1,0 +1,29 @@
+{
+  "run_name": "base",
+  "use_entity_memory": false,
+  "use_relation_bias": false,
+  "hard_synth": true,
+  "best_selection_score": 0.5795947488584474,
+  "best_metrics": {
+    "epoch": 2,
+    "fraud_accuracy": 0.543749988079071,
+    "fraud_precision_at_top10pct": 1.0,
+    "fraud_recall_at_top10pct": 0.2191780821917808,
+    "hard_negative_fp_rate": 0.0,
+    "hard_negative_mean_score": 0.432059645652771,
+    "switch_attack_mean_score": 0.44091087579727173,
+    "switch_attack_recall_at_0.5": 0.0,
+    "shared_device_benign_fp_rate": 0.0,
+    "shared_device_benign_mean_score": 0.4325137436389923,
+    "travel_burst_benign_fp_rate": 0.0,
+    "travel_burst_benign_mean_score": 0.4323698580265045,
+    "result_token_accuracy": 0.8377347417840375,
+    "result_sequence_accuracy": 0.36041666666666666,
+    "loss": 1.3650286197662354,
+    "mse_tx_count": 0.16807585954666138,
+    "mse_distinct_card": 0.05310502896706263,
+    "mse_amount_sum": 2.912731329600016,
+    "mse_same_device_distinct_card": 0.15220491091410318,
+    "result_ce_loss": 0.5031281113624573
+  }
+}

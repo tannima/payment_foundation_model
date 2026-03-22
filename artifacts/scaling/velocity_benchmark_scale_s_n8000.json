@@ -1,0 +1,51 @@
+{
+  "checkpoint": "/Users/tanxiao/Desktop/Codes/payment_foundation_model/artifacts/scaling/synthetic_model_scale_s_n8000.pt",
+  "config": {
+    "use_entity_memory": true,
+    "use_relation_bias": true,
+    "hard_synth": true,
+    "test_size": 1600
+  },
+  "targets": {
+    "tx_count_1d": {
+      "mse_log": 0.18354594707489014,
+      "mae_log": 0.35213741660118103,
+      "pearson": 0.6052525639533997,
+      "spearman": 0.6103594303131104,
+      "pairwise_ranking_acc": 0.7952824831008911,
+      "bucket_accuracy": 0.2693749964237213,
+      "exact_match_accuracy": 0.2693749964237213,
+      "off_by_one_accuracy": 0.8774999976158142
+    },
+    "distinct_card_count_7d": {
+      "mse_log": 0.06161712110042572,
+      "mae_log": 0.1490807980298996,
+      "pearson": 0.6446518898010254,
+      "spearman": 0.49174216389656067,
+      "pairwise_ranking_acc": 0.9237689971923828,
+      "bucket_accuracy": 0.7443749904632568,
+      "exact_match_accuracy": 0.7443749904632568,
+      "off_by_one_accuracy": 0.8774999976158142
+    },
+    "same_device_distinct_card_7d": {
+      "mse_log": 0.16524173319339752,
+      "mae_log": 0.33656051754951477,
+      "pearson": 0.429230660200119,
+      "spearman": 0.36562463641166687,
+      "pairwise_ranking_acc": 0.7029054760932922,
+      "bucket_accuracy": 0.53125,
+      "exact_match_accuracy": 0.53125,
+      "off_by_one_accuracy": 0.9118750095367432
+    },
+    "amount_sum_7d": {
+      "mse_log": 5.697366714477539,
+      "mae_log": 2.073270082473755,
+      "pearson": 0.21886979043483734,
+      "spearman": 0.05408838763833046,
+      "pairwise_ranking_acc": 0.5142043828964233,
+      "bucket_accuracy": 0.09875000268220901,
+      "within_10pct_accuracy": 0.0006249999860301614,
+      "within_20pct_accuracy": 0.0043750000186264515
+    }
+  }
+}
