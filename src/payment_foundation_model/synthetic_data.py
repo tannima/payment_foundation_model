@@ -97,6 +97,220 @@ PATTERN_SUBTYPE_TO_FLAGS = {
     },
 }
 
+CLAUSE_SPECS: Dict[str, Dict[str, Any]] = {
+    "recent_multi_card_3d_ge_2": {
+        "type": "distinct_card_count",
+        "canonical_text": "用户近3天更换过多张卡",
+        "templates": [
+            "用户近3天更换过多张卡",
+            "最近3天这位用户出现多卡切换",
+            "近3天存在明显换卡行为",
+        ],
+        "window": "3d",
+        "operator": ">=",
+        "threshold": 2,
+    },
+    "same_device_multi_card_7d_ge_3": {
+        "type": "same_device_distinct_card_count",
+        "canonical_text": "同一设备近7天关联至少3张不同卡",
+        "templates": [
+            "同一设备近7天关联至少3张不同卡",
+            "这台设备最近挂过多张卡",
+            "设备侧出现了明显的一机多卡模式",
+        ],
+        "window": "7d",
+        "operator": ">=",
+        "threshold": 3,
+    },
+    "billing_profile_changed_7d": {
+        "type": "billing_profile_changed",
+        "canonical_text": "近7天账单邮箱或账单地址发生变化",
+        "templates": [
+            "近7天账单邮箱或账单地址发生变化",
+            "账单身份近期出现变更",
+            "账单邮箱或地址最近不稳定",
+        ],
+        "window": "7d",
+    },
+    "anchor_new_card": {
+        "type": "new_card",
+        "canonical_text": "当前交易使用了新的卡片",
+        "templates": [
+            "当前交易使用了新的卡片",
+            "这笔支付切到了新卡",
+            "当前卡片此前未在该用户上下文中出现",
+        ],
+    },
+    "anchor_new_device": {
+        "type": "new_device",
+        "canonical_text": "当前交易使用了新的设备",
+        "templates": [
+            "当前交易使用了新的设备",
+            "这笔交易发生在此前未见过的设备上",
+            "设备侧发生了切换",
+        ],
+    },
+    "anchor_new_email_or_address": {
+        "type": "new_billing_identity",
+        "canonical_text": "当前交易使用了新的账单邮箱或账单地址",
+        "templates": [
+            "当前交易使用了新的账单邮箱或账单地址",
+            "账单身份在当前交易中发生了切换",
+            "邮箱或地址与历史记录相比是新的",
+        ],
+    },
+    "high_freq_high_amount_1d": {
+        "type": "burst_high_amount",
+        "canonical_text": "近1天出现高频高额交易",
+        "templates": [
+            "近1天出现高频高额交易",
+            "短时间内连续出现高金额支付",
+            "最近1天交易频率和金额都明显抬升",
+        ],
+        "window": "1d",
+    },
+    "travel_ip_burst_2d": {
+        "type": "travel_like_ip_burst",
+        "canonical_text": "近2天单卡在多个IP下出现密集交易",
+        "templates": [
+            "近2天单卡在多个IP下出现密集交易",
+            "单张卡近期在多个IP环境中连续交易",
+            "最近2天更像旅行场景下的多IP连续支付",
+        ],
+        "window": "2d",
+    },
+    "stable_device_recent": {
+        "type": "stable_device",
+        "canonical_text": "近期设备保持稳定",
+        "templates": [
+            "近期设备保持稳定",
+            "设备侧没有明显变化",
+            "最近一段时间设备基本一致",
+        ],
+        "window": "30d",
+    },
+    "stable_billing_recent": {
+        "type": "stable_billing",
+        "canonical_text": "近期账单身份保持稳定",
+        "templates": [
+            "近期账单身份保持稳定",
+            "账单邮箱和地址没有明显变化",
+            "最近一段时间账单身份较稳定",
+        ],
+        "window": "30d",
+    },
+    "same_card_recent_7d": {
+        "type": "same_card_recent",
+        "canonical_text": "近7天主要使用同一张卡",
+        "templates": [
+            "近7天主要使用同一张卡",
+            "最近7天没有明显换卡",
+            "近期支付工具整体保持一致",
+        ],
+        "window": "7d",
+    },
+}
+CLAUSE_TYPES = list(CLAUSE_SPECS.keys())
+CLAUSE_TYPE_TO_ID = {name: idx for idx, name in enumerate(CLAUSE_TYPES)}
+
+RULE_SPECS: List[Dict[str, Any]] = [
+    {
+        "rule_id": "rule_recent_card_switch",
+        "logic": "AND",
+        "clauses": ["recent_multi_card_3d_ge_2"],
+        "canonical_text": "用户近3天更换过多张卡",
+        "templates": [
+            "用户近3天更换过多张卡",
+            "最近3天这位用户有明显换卡行为",
+            "这笔交易前的上下文显示近3天存在多卡切换",
+        ],
+    },
+    {
+        "rule_id": "rule_device_multi_card",
+        "logic": "AND",
+        "clauses": ["same_device_multi_card_7d_ge_3"],
+        "canonical_text": "同一设备近7天关联至少3张不同卡",
+        "templates": [
+            "同一设备近7天关联至少3张不同卡",
+            "这台设备最近挂过很多卡",
+            "设备侧出现了一机多卡模式",
+        ],
+    },
+    {
+        "rule_id": "rule_card_theft_like",
+        "logic": "AND",
+        "clauses": ["anchor_new_card", "billing_profile_changed_7d", "high_freq_high_amount_1d"],
+        "canonical_text": "当前交易切换到新卡，且账单身份近期变化，并伴随近1天高频高额交易",
+        "templates": [
+            "当前交易切换到新卡，且账单身份近期变化，并伴随近1天高频高额交易",
+            "卡片和账单身份同时切换，短时间内又出现高额密集支付",
+            "更像盗卡后更换支付身份并快速打高额单的模式",
+        ],
+    },
+    {
+        "rule_id": "rule_ato_like",
+        "logic": "AND",
+        "clauses": ["same_card_recent_7d", "anchor_new_device", "anchor_new_email_or_address", "high_freq_high_amount_1d"],
+        "canonical_text": "近期仍使用同一卡片，但当前设备和账单身份是新的，并伴随近1天高频高额交易",
+        "templates": [
+            "近期仍使用同一卡片，但当前设备和账单身份是新的，并伴随近1天高频高额交易",
+            "卡没换，但设备和账单身份突然变化，同时交易金额和频率抬升",
+            "更像账户接管：同卡、新设备、新账单身份、短时高额连续支付",
+        ],
+    },
+    {
+        "rule_id": "rule_device_ring_like",
+        "logic": "AND",
+        "clauses": ["same_device_multi_card_7d_ge_3", "high_freq_high_amount_1d"],
+        "canonical_text": "同一设备近7天关联多张卡，且近1天出现高频高额交易",
+        "templates": [
+            "同一设备近7天关联多张卡，且近1天出现高频高额交易",
+            "设备侧多卡共享，同时出现短时高额密集支付",
+            "这更像设备团伙模式：一机多卡叠加高频高额下单",
+        ],
+    },
+    {
+        "rule_id": "rule_benign_card_refresh",
+        "logic": "AND",
+        "clauses": ["anchor_new_card", "stable_device_recent", "stable_billing_recent"],
+        "canonical_text": "当前交易使用新卡，但设备和账单身份近期保持稳定",
+        "templates": [
+            "当前交易使用新卡，但设备和账单身份近期保持稳定",
+            "更像正常补卡或换卡，其他身份介质没有明显变化",
+            "虽然换了卡，但设备和账单档案都很稳定",
+        ],
+    },
+    {
+        "rule_id": "rule_benign_travel_burst",
+        "logic": "AND",
+        "clauses": ["same_card_recent_7d", "travel_ip_burst_2d", "stable_billing_recent"],
+        "canonical_text": "近7天主要使用同一卡片，近2天在多个IP下连续交易，但账单身份稳定",
+        "templates": [
+            "近7天主要使用同一卡片，近2天在多个IP下连续交易，但账单身份稳定",
+            "更像正常旅行导致的多IP密集支付，账单身份并未变化",
+            "虽然IP环境变化较多，但卡和账单身份整体稳定，更接近旅行场景",
+        ],
+    },
+    {
+        "rule_id": "rule_benign_shared_device",
+        "logic": "AND",
+        "clauses": ["same_device_multi_card_7d_ge_3", "stable_billing_recent"],
+        "canonical_text": "同一设备近7天关联多张卡，但账单身份近期保持稳定",
+        "templates": [
+            "同一设备近7天关联多张卡，但账单身份近期保持稳定",
+            "虽然设备侧是一机多卡，但账单身份没有明显漂移",
+            "更像家庭共享设备，而不是账单身份同步漂移的攻击模式",
+        ],
+    },
+]
+
+VERIFIER_DIFFICULTY_TO_ID = {
+    "positive": 0,
+    "hard_negative": 1,
+    "semantic_negative": 2,
+    "easy_negative": 3,
+}
+
 
 @dataclass(frozen=True)
 class Event:
@@ -190,6 +404,299 @@ def _event_to_json(event: Event) -> Dict[str, Any]:
     payload["timestamp"] = event.timestamp.isoformat()
     payload["amount"] = round(event.amount, 2)
     return payload
+
+
+def _events_from_raw_sample(raw_sample: Dict[str, Any]) -> List[Event]:
+    events = [
+        Event(
+            timestamp=datetime.fromisoformat(payload["timestamp"]),
+            amount=float(payload["amount"]),
+            user_id=payload["user_id"],
+            card_no=payload["card_no"],
+            device_id=payload["device_id"],
+            bill_email=payload["bill_email"],
+            bill_address=payload["bill_address"],
+            ip_address=payload["ip_address"],
+            card_country=payload["card_country"],
+            issuer=payload["issuer"],
+            item_category=payload["item_category"],
+        )
+        for payload in raw_sample["events"]
+    ]
+    return sorted(events, key=lambda event: event.timestamp)
+
+
+def _window_events(events: List[Event], anchor: Event, hours: float) -> List[Tuple[int, Event]]:
+    rows: List[Tuple[int, Event]] = []
+    for idx, event in enumerate(events):
+        delta_hours = max((anchor.timestamp - event.timestamp).total_seconds() / 3600.0, 0.0)
+        if delta_hours <= hours:
+            rows.append((idx, event))
+    return rows
+
+
+def _distinct_non_null(values: List[Optional[str]]) -> int:
+    return len({value for value in values if value is not None})
+
+
+def _is_stable(values: List[Optional[str]]) -> bool:
+    observed = [value for value in values if value is not None]
+    return len(observed) > 0 and len(set(observed)) <= 1
+
+
+def _compute_verifier_features(raw_sample: Dict[str, Any]) -> Dict[str, Any]:
+    events = _events_from_raw_sample(raw_sample)
+    anchor = events[-1]
+    history = events[:-1]
+
+    recent_1d = _window_events(events, anchor, 24.0)
+    recent_2d = _window_events(events, anchor, 48.0)
+    recent_3d = _window_events(events, anchor, 24.0 * 3.0)
+    recent_7d = _window_events(events, anchor, 24.0 * 7.0)
+    recent_30d = _window_events(events, anchor, 24.0 * 30.0)
+
+    recent_1d_events = [event for _, event in recent_1d]
+    recent_2d_events = [event for _, event in recent_2d]
+    recent_3d_events = [event for _, event in recent_3d]
+    recent_7d_events = [event for _, event in recent_7d]
+    recent_30d_events = [event for _, event in recent_30d]
+
+    history_cards = {event.card_no for event in history}
+    history_devices = {event.device_id for event in history if event.device_id is not None}
+    history_emails = {event.bill_email for event in history if event.bill_email is not None}
+    history_addresses = {event.bill_address for event in history if event.bill_address is not None}
+
+    distinct_cards_3d = len({event.card_no for event in recent_3d_events})
+    distinct_cards_7d = len({event.card_no for event in recent_7d_events})
+    same_device_distinct_cards_7d = len(
+        {
+            event.card_no
+            for event in recent_7d_events
+            if anchor.device_id is not None and event.device_id == anchor.device_id
+        }
+    )
+    distinct_ips_2d = _distinct_non_null([event.ip_address for event in recent_2d_events])
+    distinct_emails_7d = _distinct_non_null([event.bill_email for event in recent_7d_events])
+    distinct_addresses_7d = _distinct_non_null([event.bill_address for event in recent_7d_events])
+    distinct_devices_30d = _distinct_non_null([event.device_id for event in recent_30d_events])
+    distinct_emails_30d = _distinct_non_null([event.bill_email for event in recent_30d_events])
+    distinct_addresses_30d = _distinct_non_null([event.bill_address for event in recent_30d_events])
+    has_email_30d = any(event.bill_email is not None for event in recent_30d_events)
+    has_address_30d = any(event.bill_address is not None for event in recent_30d_events)
+    tx_count_1d = max(len(recent_1d_events) - 1, 0)
+    high_amount_count_1d = sum(1 for event in recent_1d_events if event.amount >= 250.0)
+
+    feature_values = {
+        "recent_multi_card_3d_ge_2": distinct_cards_3d >= 2,
+        "same_device_multi_card_7d_ge_3": same_device_distinct_cards_7d >= 3,
+        "billing_profile_changed_7d": distinct_emails_7d >= 2 or distinct_addresses_7d >= 2,
+        "anchor_new_card": anchor.card_no not in history_cards,
+        "anchor_new_device": anchor.device_id is not None and anchor.device_id not in history_devices,
+        "anchor_new_email_or_address": (
+            (anchor.bill_email is not None and anchor.bill_email not in history_emails)
+            or (anchor.bill_address is not None and anchor.bill_address not in history_addresses)
+        ),
+        "high_freq_high_amount_1d": tx_count_1d >= 3 and high_amount_count_1d >= 2,
+        "travel_ip_burst_2d": distinct_cards_7d <= 1 and distinct_ips_2d >= 3 and tx_count_1d >= 3,
+        "stable_device_recent": _is_stable([event.device_id for event in recent_30d_events]),
+        "stable_billing_recent": (
+            (distinct_emails_30d <= 1 if has_email_30d else True)
+            and (distinct_addresses_30d <= 1 if has_address_30d else True)
+            and (has_email_30d or has_address_30d)
+        ),
+        "same_card_recent_7d": distinct_cards_7d <= 1,
+    }
+
+    known = {
+        "recent_multi_card_3d_ge_2": True,
+        "same_device_multi_card_7d_ge_3": anchor.device_id is not None and any(
+            event.device_id is not None for event in recent_7d_events
+        ),
+        "billing_profile_changed_7d": any(
+            event.bill_email is not None or event.bill_address is not None for event in recent_7d_events
+        ),
+        "anchor_new_card": True,
+        "anchor_new_device": anchor.device_id is not None and len(history_devices) > 0,
+        "anchor_new_email_or_address": (
+            (anchor.bill_email is not None and len(history_emails) > 0)
+            or (anchor.bill_address is not None and len(history_addresses) > 0)
+        ),
+        "high_freq_high_amount_1d": True,
+        "travel_ip_burst_2d": anchor.ip_address is not None and any(
+            event.ip_address is not None for event in recent_2d_events
+        ),
+        "stable_device_recent": any(event.device_id is not None for event in recent_30d_events),
+        "stable_billing_recent": any(
+            event.bill_email is not None or event.bill_address is not None for event in recent_30d_events
+        ),
+        "same_card_recent_7d": True,
+    }
+
+    evidence = {
+        "recent_multi_card_3d_ge_2": [idx for idx, _ in recent_3d],
+        "same_device_multi_card_7d_ge_3": [
+            idx for idx, event in recent_7d if anchor.device_id is not None and event.device_id == anchor.device_id
+        ],
+        "billing_profile_changed_7d": [
+            idx
+            for idx, event in recent_7d
+            if (
+                anchor.bill_email is not None
+                and event.bill_email is not None
+                and event.bill_email != anchor.bill_email
+            )
+            or (
+                anchor.bill_address is not None
+                and event.bill_address is not None
+                and event.bill_address != anchor.bill_address
+            )
+        ],
+        "anchor_new_card": [len(events) - 1],
+        "anchor_new_device": [len(events) - 1],
+        "anchor_new_email_or_address": [len(events) - 1],
+        "high_freq_high_amount_1d": [
+            idx for idx, event in recent_1d if event.amount >= 250.0 or idx == len(events) - 1
+        ],
+        "travel_ip_burst_2d": [idx for idx, _ in recent_2d],
+        "stable_device_recent": [idx for idx, _ in recent_30d],
+        "stable_billing_recent": [idx for idx, _ in recent_30d],
+        "same_card_recent_7d": [idx for idx, _ in recent_7d],
+    }
+
+    metrics = {
+        "distinct_cards_3d": distinct_cards_3d,
+        "distinct_cards_7d": distinct_cards_7d,
+        "same_device_distinct_cards_7d": same_device_distinct_cards_7d,
+        "distinct_ips_2d": distinct_ips_2d,
+        "distinct_emails_7d": distinct_emails_7d,
+        "distinct_addresses_7d": distinct_addresses_7d,
+        "tx_count_1d": tx_count_1d,
+        "high_amount_count_1d": high_amount_count_1d,
+    }
+
+    return {
+        "events": events,
+        "anchor": anchor,
+        "feature_values": feature_values,
+        "known": known,
+        "evidence": evidence,
+        "metrics": metrics,
+    }
+
+
+def _select_template(templates: List[str], rng: random.Random) -> str:
+    return templates[rng.randrange(len(templates))]
+
+
+def _classify_verifier_difficulty(clause_labels: Dict[str, int], overall_match: int) -> str:
+    if overall_match == 1:
+        return "positive"
+    positives = sum(clause_labels.values())
+    total = len(clause_labels)
+    if total > 1 and positives == total - 1:
+        return "hard_negative"
+    if positives > 0:
+        return "semantic_negative"
+    return "easy_negative"
+
+
+def _build_rule_pair_rows(
+    raw_sample: Dict[str, Any],
+    max_pairs_per_sample: int,
+    seed: int,
+) -> List[Dict[str, Any]]:
+    features = _compute_verifier_features(raw_sample)
+    value_map = features["feature_values"]
+    known_map = features["known"]
+    evidence_map = features["evidence"]
+    metrics = features["metrics"]
+    rng = random.Random(seed)
+    candidate_rows: List[Dict[str, Any]] = []
+
+    for rule_spec in RULE_SPECS:
+        clause_ids = rule_spec["clauses"]
+        if not all(known_map.get(clause_id, False) for clause_id in clause_ids):
+            continue
+
+        clause_labels = {clause_id: int(bool(value_map[clause_id])) for clause_id in clause_ids}
+        overall_match = int(all(clause_labels.values()))
+        evidence_indices = sorted(
+            {
+                index
+                for clause_id in clause_ids
+                for index in evidence_map.get(clause_id, [])
+            }
+        )
+        candidate_rows.append(
+            {
+                "sample_id": f"verifier_{raw_sample['sample_id']}_{rule_spec['rule_id']}",
+                "transaction_context": {
+                    "sample_id": raw_sample["sample_id"],
+                    "domain": raw_sample["domain"],
+                    "pattern_subtype": raw_sample["pattern_subtype"],
+                    "events": raw_sample["events"],
+                },
+                "rule": {
+                    "rule_id": rule_spec["rule_id"],
+                    "raw_text": _select_template(rule_spec["templates"], rng),
+                    "canonical_text": rule_spec["canonical_text"],
+                    "logic": rule_spec["logic"],
+                    "clauses": [
+                        {
+                            "clause_id": clause_id,
+                            "type": CLAUSE_SPECS[clause_id]["type"],
+                            "text": _select_template(CLAUSE_SPECS[clause_id]["templates"], rng),
+                            "canonical_text": CLAUSE_SPECS[clause_id]["canonical_text"],
+                            "window": CLAUSE_SPECS[clause_id].get("window"),
+                            "operator": CLAUSE_SPECS[clause_id].get("operator"),
+                            "threshold": CLAUSE_SPECS[clause_id].get("threshold"),
+                        }
+                        for clause_id in clause_ids
+                    ],
+                },
+                "labels": {
+                    "overall_match": overall_match,
+                    "uncertain": 0,
+                    "clause_labels": clause_labels,
+                    "evidence_event_indices": evidence_indices,
+                },
+                "meta": {
+                    "source": "synthetic_rule_builder",
+                    "domain": raw_sample["domain"],
+                    "pattern_subtype": raw_sample["pattern_subtype"],
+                    "difficulty": _classify_verifier_difficulty(clause_labels, overall_match),
+                    "metrics": metrics,
+                },
+            }
+        )
+
+    grouped: Dict[str, List[Dict[str, Any]]] = {
+        "positive": [],
+        "hard_negative": [],
+        "semantic_negative": [],
+        "easy_negative": [],
+    }
+    for row in candidate_rows:
+        grouped[row["meta"]["difficulty"]].append(row)
+
+    selected: List[Dict[str, Any]] = []
+    quotas = [
+        ("positive", 2),
+        ("hard_negative", 2),
+        ("semantic_negative", 1),
+        ("easy_negative", 1),
+    ]
+    for difficulty, limit in quotas:
+        rows = grouped[difficulty]
+        rng.shuffle(rows)
+        selected.extend(rows[:limit])
+
+    if len(selected) < max_pairs_per_sample:
+        remaining = [row for row in candidate_rows if row not in selected]
+        rng.shuffle(remaining)
+        selected.extend(remaining[: max_pairs_per_sample - len(selected)])
+
+    return selected[:max_pairs_per_sample]
 
 
 def _build_result_chain_for_pattern(
@@ -809,23 +1316,7 @@ def _build_sample_tensors(
     raw_sample: Dict[str, Any],
     max_events: int,
 ) -> Dict[str, torch.Tensor]:
-    events = [
-        Event(
-            timestamp=datetime.fromisoformat(payload["timestamp"]),
-            amount=float(payload["amount"]),
-            user_id=payload["user_id"],
-            card_no=payload["card_no"],
-            device_id=payload["device_id"],
-            bill_email=payload["bill_email"],
-            bill_address=payload["bill_address"],
-            ip_address=payload["ip_address"],
-            card_country=payload["card_country"],
-            issuer=payload["issuer"],
-            item_category=payload["item_category"],
-        )
-        for payload in raw_sample["events"]
-    ]
-    events = sorted(events, key=lambda event: event.timestamp)
+    events = _events_from_raw_sample(raw_sample)
     anchor = events[-1]
     history = events[:-1]
     if len(events) > max_events:
@@ -1044,4 +1535,80 @@ class SyntheticRiskDataset(Dataset):
         return self.size
 
     def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
+        return self.samples[index]
+
+
+class SyntheticRuleVerifierDataset(Dataset):
+    def __init__(
+        self,
+        size: int,
+        max_events: int = 32,
+        fraud_rate: float = 0.45,
+        seed: int = 7,
+        hard_mode: bool = True,
+        max_pairs_per_sample: int = 6,
+    ) -> None:
+        self.base_dataset = SyntheticRiskDataset(
+            size=size,
+            max_events=max_events,
+            fraud_rate=fraud_rate,
+            seed=seed,
+            hard_mode=hard_mode,
+        )
+        self.max_events = max_events
+        self.max_pairs_per_sample = max_pairs_per_sample
+        self.rows: List[Dict[str, Any]] = []
+        self.samples: List[Dict[str, Any]] = []
+
+        for raw_sample, tx_sample in zip(self.base_dataset.raw_samples, self.base_dataset.samples):
+            pair_rows = _build_rule_pair_rows(
+                raw_sample,
+                max_pairs_per_sample=self.max_pairs_per_sample,
+                seed=seed + raw_sample["sample_id"] * 104729,
+            )
+            for row in pair_rows:
+                self.rows.append(row)
+                sample = {key: value.clone() if isinstance(value, torch.Tensor) else value for key, value in tx_sample.items()}
+                clause_target = torch.zeros(len(CLAUSE_TYPES), dtype=torch.float32)
+                clause_mask = torch.zeros(len(CLAUSE_TYPES), dtype=torch.bool)
+                for clause_id, label in row["labels"]["clause_labels"].items():
+                    clause_idx = CLAUSE_TYPE_TO_ID[clause_id]
+                    clause_target[clause_idx] = float(label)
+                    clause_mask[clause_idx] = True
+
+                evidence_mask = torch.zeros(self.max_events, dtype=torch.bool)
+                for event_idx in row["labels"]["evidence_event_indices"]:
+                    if 0 <= event_idx < self.max_events:
+                        evidence_mask[event_idx] = True
+
+                sample.update(
+                    {
+                        "verifier_rule_text": row["rule"]["raw_text"],
+                        "verifier_rule_canonical_text": row["rule"]["canonical_text"],
+                        "verifier_rule_id": row["rule"]["rule_id"],
+                        "verifier_overall_match": torch.tensor(float(row["labels"]["overall_match"]), dtype=torch.float32),
+                        "verifier_uncertain": torch.tensor(float(row["labels"]["uncertain"]), dtype=torch.float32),
+                        "verifier_clause_target": clause_target,
+                        "verifier_clause_mask": clause_mask,
+                        "verifier_evidence_mask": evidence_mask,
+                        "verifier_difficulty_id": torch.tensor(
+                            VERIFIER_DIFFICULTY_TO_ID[row["meta"]["difficulty"]], dtype=torch.long
+                        ),
+                        "verifier_pattern_subtype": row["meta"]["pattern_subtype"],
+                    }
+                )
+                self.samples.append(sample)
+
+    def export_jsonl(self, path: str | Path, limit: Optional[int] = None) -> None:
+        export_path = Path(path)
+        export_path.parent.mkdir(parents=True, exist_ok=True)
+        rows = self.rows if limit is None else self.rows[:limit]
+        with export_path.open("w", encoding="utf-8") as handle:
+            for row in rows:
+                handle.write(json.dumps(row, ensure_ascii=True) + "\n")
+
+    def __len__(self) -> int:
+        return len(self.samples)
+
+    def __getitem__(self, index: int) -> Dict[str, Any]:
         return self.samples[index]
