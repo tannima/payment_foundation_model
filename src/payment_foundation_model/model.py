@@ -370,3 +370,125 @@ class TransactionTransformer(nn.Module):
         if "result_input_ids" in batch:
             outputs["result_logits"] = self.decode_result_chain(memory, memory_mask, batch["result_input_ids"])
         return outputs
+
+
+class TransactionRuleVerifier(nn.Module):
+    def __init__(
+        self,
+        tx_config: ModelConfig,
+        text_vocab_size: int,
+        num_clauses: int,
+        max_rule_tokens: int = 64,
+        text_num_layers: int = 2,
+    ) -> None:
+        super().__init__()
+        self.tx_encoder = TransactionTransformer(tx_config)
+        self.d_model = tx_config.d_model
+        self.max_rule_tokens = max_rule_tokens
+
+        self.rule_token_emb = nn.Embedding(text_vocab_size, self.d_model)
+        self.rule_position_emb = nn.Embedding(max_rule_tokens + 1, self.d_model)
+        text_layer = nn.TransformerEncoderLayer(
+            d_model=self.d_model,
+            nhead=tx_config.num_heads,
+            dim_feedforward=self.d_model * tx_config.mlp_ratio,
+            dropout=tx_config.dropout,
+            batch_first=True,
+            activation="gelu",
+            norm_first=True,
+        )
+        self.rule_encoder = nn.TransformerEncoder(text_layer, num_layers=text_num_layers)
+        self.rule_norm = nn.LayerNorm(self.d_model)
+        self.cross_attn = nn.MultiheadAttention(
+            embed_dim=self.d_model,
+            num_heads=tx_config.num_heads,
+            dropout=tx_config.dropout,
+            batch_first=True,
+        )
+        self.cross_norm = nn.LayerNorm(self.d_model)
+
+        fusion_dim = self.d_model * 4
+        self.match_head = nn.Sequential(
+            nn.Linear(fusion_dim, self.d_model),
+            nn.GELU(),
+            nn.Dropout(tx_config.dropout),
+            nn.Linear(self.d_model, 1),
+        )
+        self.uncertainty_head = nn.Sequential(
+            nn.Linear(fusion_dim, self.d_model),
+            nn.GELU(),
+            nn.Dropout(tx_config.dropout),
+            nn.Linear(self.d_model, 1),
+        )
+        self.clause_head = nn.Sequential(
+            nn.Linear(fusion_dim, self.d_model),
+            nn.GELU(),
+            nn.Dropout(tx_config.dropout),
+            nn.Linear(self.d_model, num_clauses),
+        )
+        self.evidence_head = nn.Sequential(
+            nn.Linear(fusion_dim, self.d_model),
+            nn.GELU(),
+            nn.Dropout(tx_config.dropout),
+            nn.Linear(self.d_model, 1),
+        )
+
+    @staticmethod
+    def _masked_mean(x: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+        weights = mask.unsqueeze(-1).float()
+        denom = weights.sum(dim=1).clamp(min=1.0)
+        return (x * weights).sum(dim=1) / denom
+
+    def encode_rule_text(self, rule_input_ids: torch.Tensor, rule_attention_mask: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
+        batch_size, seq_len = rule_input_ids.shape
+        device = rule_input_ids.device
+        positions = torch.arange(1, seq_len + 1, device=device).unsqueeze(0).expand(batch_size, -1)
+        x = self.rule_token_emb(rule_input_ids) + self.rule_position_emb(positions)
+        x = self.rule_encoder(x, src_key_padding_mask=~rule_attention_mask)
+        x = self.rule_norm(x)
+        pooled = self._masked_mean(x, rule_attention_mask)
+        return x, pooled
+
+    def forward(self, batch: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
+        memory, memory_mask, tx_pooled = self.tx_encoder.encode_events(batch)
+        rule_hidden, _ = self.encode_rule_text(batch["rule_input_ids"], batch["rule_attention_mask"])
+        cross_out, _ = self.cross_attn(
+            query=rule_hidden,
+            key=memory,
+            value=memory,
+            key_padding_mask=~memory_mask,
+            need_weights=False,
+        )
+        rule_hidden = self.cross_norm(rule_hidden + cross_out)
+        rule_pooled = self._masked_mean(rule_hidden, batch["rule_attention_mask"])
+
+        fused = torch.cat(
+            [
+                tx_pooled,
+                rule_pooled,
+                tx_pooled * rule_pooled,
+                torch.abs(tx_pooled - rule_pooled),
+            ],
+            dim=-1,
+        )
+        event_len = batch["event_mask"].shape[1]
+        event_repr = memory[:, 1 : 1 + event_len]
+        rule_expand = rule_pooled.unsqueeze(1).expand(-1, event_len, -1)
+        event_fused = torch.cat(
+            [
+                event_repr,
+                rule_expand,
+                event_repr * rule_expand,
+                torch.abs(event_repr - rule_expand),
+            ],
+            dim=-1,
+        )
+
+        return {
+            "match_logit": self.match_head(fused).squeeze(-1),
+            "uncertainty_logit": self.uncertainty_head(fused).squeeze(-1),
+            "clause_logits": self.clause_head(fused),
+            "evidence_logits": self.evidence_head(event_fused).squeeze(-1),
+            "tx_embedding": tx_pooled,
+            "rule_embedding": rule_pooled,
+        }

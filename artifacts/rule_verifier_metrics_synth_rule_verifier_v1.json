@@ -1,0 +1,13 @@
+{
+  "loss": 0.30522207419077557,
+  "match_loss": 0.23786485319336256,
+  "clause_loss": 0.10010048933327198,
+  "evidence_loss": 0.08637930918484926,
+  "match_accuracy": 0.9481192131837209,
+  "precision_at_0.5": 0.7035506318012873,
+  "positive_recall_at_0.5": 0.9848484843969345,
+  "hard_negative_accuracy": 0.9323920458555222,
+  "hard_negative_mean_score": 0.06856000992896345,
+  "clause_accuracy": 0.9660084247589111,
+  "evidence_hit_at_3": 1.0
+}

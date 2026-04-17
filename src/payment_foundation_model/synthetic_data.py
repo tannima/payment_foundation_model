@@ -239,23 +239,23 @@ RULE_SPECS: List[Dict[str, Any]] = [
     {
         "rule_id": "rule_card_theft_like",
         "logic": "AND",
-        "clauses": ["anchor_new_card", "billing_profile_changed_7d", "high_freq_high_amount_1d"],
-        "canonical_text": "当前交易切换到新卡，且账单身份近期变化，并伴随近1天高频高额交易",
+        "clauses": ["recent_multi_card_3d_ge_2", "billing_profile_changed_7d", "high_freq_high_amount_1d"],
+        "canonical_text": "用户近3天切换过多张卡，且账单身份近期变化，并伴随近1天高频高额交易",
         "templates": [
-            "当前交易切换到新卡，且账单身份近期变化，并伴随近1天高频高额交易",
-            "卡片和账单身份同时切换，短时间内又出现高额密集支付",
-            "更像盗卡后更换支付身份并快速打高额单的模式",
+            "用户近3天切换过多张卡，且账单身份近期变化，并伴随近1天高频高额交易",
+            "卡片和账单身份同时变化，短时间内又出现高额密集支付",
+            "更像盗卡后连续换卡并快速打高额单的模式",
         ],
     },
     {
         "rule_id": "rule_ato_like",
         "logic": "AND",
-        "clauses": ["same_card_recent_7d", "anchor_new_device", "anchor_new_email_or_address", "high_freq_high_amount_1d"],
-        "canonical_text": "近期仍使用同一卡片，但当前设备和账单身份是新的，并伴随近1天高频高额交易",
+        "clauses": ["same_card_recent_7d", "billing_profile_changed_7d", "high_freq_high_amount_1d"],
+        "canonical_text": "近期仍使用同一卡片，但账单身份近期变化，并伴随近1天高频高额交易",
         "templates": [
-            "近期仍使用同一卡片，但当前设备和账单身份是新的，并伴随近1天高频高额交易",
-            "卡没换，但设备和账单身份突然变化，同时交易金额和频率抬升",
-            "更像账户接管：同卡、新设备、新账单身份、短时高额连续支付",
+            "近期仍使用同一卡片，但账单身份近期变化，并伴随近1天高频高额交易",
+            "卡没换，但账单身份突然变化，同时交易金额和频率抬升",
+            "更像账户接管：同卡、账单身份变化、短时高额连续支付",
         ],
     },
     {
@@ -272,12 +272,12 @@ RULE_SPECS: List[Dict[str, Any]] = [
     {
         "rule_id": "rule_benign_card_refresh",
         "logic": "AND",
-        "clauses": ["anchor_new_card", "stable_device_recent", "stable_billing_recent"],
-        "canonical_text": "当前交易使用新卡，但设备和账单身份近期保持稳定",
+        "clauses": ["recent_multi_card_3d_ge_2", "stable_device_recent", "stable_billing_recent"],
+        "canonical_text": "近期虽然有换卡，但设备和账单身份保持稳定",
         "templates": [
-            "当前交易使用新卡，但设备和账单身份近期保持稳定",
+            "近期虽然有换卡，但设备和账单身份保持稳定",
             "更像正常补卡或换卡，其他身份介质没有明显变化",
-            "虽然换了卡，但设备和账单档案都很稳定",
+            "虽然最近换了卡，但设备和账单档案都很稳定",
         ],
     },
     {
